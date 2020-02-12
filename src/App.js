@@ -1,29 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-	<p>
-	  Dev version!
-	</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Navbar from "./components/layout/Navbar";
+import Songsterrs from "./components/songsterr/Songsterrs";
+
+class App extends Component {
+  state = {
+    songsterrs: [],
+    loading: false,
+    rows: 1,
+    columns: 2
+  };
+
+  // initially add a single Songsterr to the page when the page loads
+  componentDidMount() {
+    this.setState({ loading: true });
+    this.setState({ songsterrs: [{ id: 1 }, { id: 2 }] });
+    this.setState({ loading: false });
+  }
+
+  render() {
+    const { loading, songsterrs, rows, columns } = this.state;
+    return (
+      <Router>
+        <div className="App">
+          <Navbar />
+          <Switch>
+            <Route
+              exact
+              path="/"
+              render={props => (
+                <Fragment>
+                  <Songsterrs
+                    loading={loading}
+                    songsterrs={songsterrs}
+                    rows={rows}
+                    columns={columns}
+                  />
+                </Fragment>
+              )}
+            />
+            <Route exact path="/about" render={props => <p>About page</p>} />
+          </Switch>
+        </div>
+      </Router>
+    );
+  }
 }
 
 export default App;
