@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
-
+html,
+body {
+  height: 100%;
+}
 /* Global Styles */
 :root {
   --primary-color: #4527a0;

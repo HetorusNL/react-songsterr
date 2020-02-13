@@ -10,8 +10,9 @@ const Songsterrs = ({ loading, songsterrs, rows, columns }) => {
   } else {
     const songsterrStyle = {
       display: "grid",
-      gridTemplateColumns: "repeat(2, 1fr)"
+      gridTemplateColumns: "repeat(" + columns + ", 1fr)"
     };
+    console.log(songsterrStyle);
     return (
       <div style={songsterrStyle}>
         {console.log(songsterrs)}
