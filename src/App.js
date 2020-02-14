@@ -16,7 +16,8 @@ class App extends Component {
   // initially add a single Songsterr to the page when the page loads
   componentDidMount() {
     this.setState({ loading: true });
-    this.setState({ songsterrs: [{ id: 1 }, { id: 2 }] });
+    // { songsterrs: [{ id: 1 }] } { songsterrs: [{ id: 1 }, { id: 2 }] }
+    this.setState({ songsterrs: [{ id: 1 }] });
     this.setState({ loading: false });
   }
 

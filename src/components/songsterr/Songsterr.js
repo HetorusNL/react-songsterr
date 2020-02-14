@@ -1,16 +1,21 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import Spinner from "../layout/Spinner";
+
 class Songsterr extends Component {
-  // = ({ songsterr: { id } }) => {
+  state = {
+    loading: true
+  };
 
   static propTypes = {
     songsterr: PropTypes.object.isRequired
   };
 
-  resizeIframe(obj) {
+  iframeOnLoad(obj) {
     console.log(obj);
     console.log(obj.target.scrollHeight);
+    this.setState({ loading: false });
     //obj.style.height = 0;
     //obj.style.height = obj.contentWindow.document.body.scrollHeight + "px";
   }
@@ -37,16 +42,24 @@ class Songsterr extends Component {
 
     return (
       <div>
+        <p>A songsterr will be displayed here with id: {id}</p>
         <p onClick={this.handleClick.bind(this)}>
-          A songsterr will be displayed here with id: {id}
+          &lt; Click here to send "play" event to all Songsterrs &gt;
         </p>
+        {this.state.loading && (
+          <Spinner height={document.body.scrollHeight - 150} />
+        )}
         <iframe
           id={"songsterr-window-" + id}
-          src="https://songsterr.com"
+          src="http://localhost:3003"
           title={"songsterr window " + id}
           width="100%"
           height={document.body.scrollHeight - 150}
-          onLoad={this.resizeIframe.bind(this)}
+          onLoad={this.iframeOnLoad.bind(this)}
+          style={{
+            backgroundColor: "white",
+            display: this.state.loading ? "none" : "block"
+          }}
         ></iframe>
       </div>
     );
