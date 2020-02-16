@@ -24,16 +24,26 @@ class Songsterr extends Component {
     console.log(obj);
     console.log("songsterr-window-" + this.props.songsterr.id);
     var element = document.getElementById(
-      "songsterr-window-" + this.props.songsterr.id
+//      "songsterr-window-" + this.props.songsterr.id
+      "songsterr-window-1"
     );
     console.log(element);
-    console.log(element);
+    console.log("main domain: ", document.domain);
+    console.log("iframe: ", element.contentWindow);
     const ke = new KeyboardEvent("keydown", {
       bubbles: true,
       cancelable: true,
       keyCode: 32
     });
-    element.contentWindow.dispatchEvent(ke);
+    element.contentWindow.postMessage(JSON.stringify({"command": "play_pause"}), "http://localhost:3003");
+    //element.contentWindow.dispatchEvent(ke);
+
+    // ugly hack to send play pause to two windows:
+    var element2 = document.getElementById(
+      "songsterr-window-2"
+    );
+    console.log(element2);
+    element2.contentWindow.postMessage(JSON.stringify({"command": "play_pause"}), "http://localhost:3003");
   }
 
   render() {

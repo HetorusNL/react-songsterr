@@ -17,7 +17,7 @@ class App extends Component {
   componentDidMount() {
     this.setState({ loading: true });
     // { songsterrs: [{ id: 1 }] } { songsterrs: [{ id: 1 }, { id: 2 }] }
-    this.setState({ songsterrs: [{ id: 1 }] });
+    this.setState({ songsterrs: [{ id: 1 }, { id: 2 }] });
     this.setState({ loading: false });
   }
 
