@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ icon, title }) => {
+const Navbar = ({ icon, iconPlayPause, title, navbarCallback }) => {
   return (
     <nav className="navbar bg-primary">
       <Link to="/">
@@ -10,6 +10,16 @@ const Navbar = ({ icon, title }) => {
           <i className={icon}></i> {title}
         </h1>
       </Link>
+      <ul>
+        <li>
+          <i
+            className={iconPlayPause}
+            onClick={() => {
+              navbarCallback("playPause");
+            }}
+          ></i>
+        </li>
+      </ul>
       <ul>
         <li>
           <Link to="/">Home</Link>
@@ -24,12 +34,16 @@ const Navbar = ({ icon, title }) => {
 
 Navbar.defaultProps = {
   title: "React Songsterr",
-  icon: "fab fa-github"
+  iconPlayPause: "fas fa-play",
+  icon: "fab fa-react",
+  navbarCallback: undefined
 };
 
 Navbar.propTypes = {
   title: PropTypes.string.isRequired,
-  icon: PropTypes.string.isRequired
+  icon: PropTypes.string.isRequired,
+  iconPlayPause: PropTypes.string.isRequired,
+  navbarCallback: PropTypes.func.isRequired
 };
 
 export default Navbar;

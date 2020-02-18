@@ -9,62 +9,50 @@ class Songsterr extends Component {
   };
 
   static propTypes = {
-    songsterr: PropTypes.object.isRequired
+    songsterr: PropTypes.object.isRequired,
+    rows: PropTypes.number.isRequired
   };
 
   iframeOnLoad(obj) {
-    console.log(obj);
-    console.log(obj.target.scrollHeight);
     this.setState({ loading: false });
-    //obj.style.height = 0;
-    //obj.style.height = obj.contentWindow.document.body.scrollHeight + "px";
   }
 
-  handleClick(obj) {
-    console.log(obj);
-    console.log("songsterr-window-" + this.props.songsterr.id);
+  playPause() {
     var element = document.getElementById(
-//      "songsterr-window-" + this.props.songsterr.id
-      "songsterr-window-1"
+      "songsterr-window-" + this.props.songsterr.id
     );
     console.log(element);
-    console.log("main domain: ", document.domain);
-    console.log("iframe: ", element.contentWindow);
-    const ke = new KeyboardEvent("keydown", {
-      bubbles: true,
-      cancelable: true,
-      keyCode: 32
-    });
-    element.contentWindow.postMessage(JSON.stringify({"command": "play_pause"}), "http://localhost:3003");
-    //element.contentWindow.dispatchEvent(ke);
-
-    // ugly hack to send play pause to two windows:
-    var element2 = document.getElementById(
-      "songsterr-window-2"
+    element.contentWindow.postMessage(
+      JSON.stringify({ command: "play_pause" }),
+      "http://localhost:3003"
     );
-    console.log(element2);
-    element2.contentWindow.postMessage(JSON.stringify({"command": "play_pause"}), "http://localhost:3003");
+
+    // code to send a keyboard event (unusable at cross origin content)
+    //const ke = new KeyboardEvent("keydown", {
+    //  bubbles: true,
+    //  cancelable: true,
+    //  keyCode: 32
+    //});
+    //element.contentWindow.dispatchEvent(ke);
   }
 
   render() {
+    const { rows } = this.props;
     const { id } = this.props.songsterr;
     console.log(this.props);
 
     return (
       <div>
         <p>A songsterr will be displayed here with id: {id}</p>
-        <p onClick={this.handleClick.bind(this)}>
-          &lt; Click here to send "play" event to all Songsterrs &gt;
-        </p>
         {this.state.loading && (
-          <Spinner height={document.body.scrollHeight - 150} />
+          <Spinner height={(document.body.scrollHeight - 100) / rows - 25} />
         )}
         <iframe
           id={"songsterr-window-" + id}
           src="http://localhost:3003"
           title={"songsterr window " + id}
           width="100%"
-          height={document.body.scrollHeight - 150}
+          height={(document.body.scrollHeight - 100) / rows - 25}
           onLoad={this.iframeOnLoad.bind(this)}
           style={{
             backgroundColor: "white",
