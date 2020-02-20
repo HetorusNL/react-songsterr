@@ -24,7 +24,7 @@ class Songsterr extends Component {
     console.log(element);
     element.contentWindow.postMessage(
       JSON.stringify({ command: "play_pause" }),
-      "http://localhost:3003"
+      "https://songsterr.rs.hetorus.nl"
     );
 
     // code to send a keyboard event (unusable at cross origin content)
@@ -49,7 +49,7 @@ class Songsterr extends Component {
         )}
         <iframe
           id={"songsterr-window-" + id}
-          src="http://localhost:3003"
+          src="https://songsterr.rs.hetorus.nl"
           title={"songsterr window " + id}
           width="100%"
           height={(document.body.scrollHeight - 100) / rows - 25}
