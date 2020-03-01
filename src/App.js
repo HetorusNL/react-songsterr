@@ -22,9 +22,30 @@ class App extends Component {
   // initially add a single Songsterr to the page when the page loads
   componentDidMount() {
     this.setState({ loading: true });
-    // { songsterrs: [{ id: 1 }] } { songsterrs: [{ id: 1 }, { id: 2 }] }
-    this.setState({ songsterrs: [{ id: 0 }, { id: 1 }] });
+    this.updateRowsColumns(this.state.rows, this.state.columns);
     this.setState({ loading: false });
+  }
+
+  updateRowsColumns(newRows, newColumns) {
+    // calculate the new values of the songsterrs array
+    var songsterrs = this.state.songsterrs;
+    const newLength = newRows * newColumns;
+    const oldLength = songsterrs.length;
+    const diff = newLength - oldLength;
+    if (diff > 0) {
+      for (var i = oldLength; i < newLength; i++) {
+        songsterrs.push({ id: i });
+      }
+    } else if (diff < 0) {
+      songsterrs.length = newLength;
+    }
+
+    // set the new state properties
+    this.setState({
+      rows: newRows,
+      columns: newColumns,
+      songsterrs: songsterrs
+    });
   }
 
   navbarCallback(command) {
@@ -39,6 +60,22 @@ class App extends Component {
         });
         this.songsterrsRef.current.playPause();
         console.log("done performing callback");
+        break;
+      case "rowsMin":
+        if (this.state.rows > 1) {
+          this.updateRowsColumns(this.state.rows - 1, this.state.columns);
+        }
+        break;
+      case "rowsPlus":
+        this.updateRowsColumns(this.state.rows + 1, this.state.columns);
+        break;
+      case "columnsMin":
+        if (this.state.columns > 1) {
+          this.updateRowsColumns(this.state.rows, this.state.columns - 1);
+        }
+        break;
+      case "columnsPlus":
+        this.updateRowsColumns(this.state.rows, this.state.columns + 1);
         break;
       default:
         console.log("unknown command: ", command);

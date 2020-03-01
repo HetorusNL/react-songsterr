@@ -10,12 +10,46 @@ const Navbar = ({ icon, iconPlayPause, title, navbarCallback }) => {
           <i className={icon}></i> {title}
         </h1>
       </Link>
-      <ul>
+      <ul style={{ alignItems: "center" }}>
         <li>
           <i
             className={iconPlayPause}
             onClick={() => {
               navbarCallback("playPause");
+            }}
+          ></i>
+        </li>
+        <li style={{ marginLeft: "1em" }}>
+          <i
+            className="fas fa-minus-circle fa-2x"
+            onClick={() => {
+              navbarCallback("rowsMin");
+            }}
+          ></i>
+        </li>
+        <li style={{ marginLeft: "0.5em", marginRight: "0.5em" }}>Rows</li>
+        <li>
+          <i
+            className="fas fa-plus-circle fa-2x"
+            onClick={() => {
+              navbarCallback("rowsPlus");
+            }}
+          ></i>
+        </li>
+        <li style={{ marginLeft: "1em" }}>
+          <i
+            className="fas fa-minus-circle fa-2x"
+            onClick={() => {
+              navbarCallback("columnsMin");
+            }}
+          ></i>
+        </li>
+        <li style={{ marginLeft: "0.5em", marginRight: "0.5em" }}>Columns</li>
+        <li>
+          <i
+            className="fas fa-plus-circle fa-2x"
+            onClick={() => {
+              navbarCallback("columnsPlus");
             }}
           ></i>
         </li>
@@ -34,7 +68,7 @@ const Navbar = ({ icon, iconPlayPause, title, navbarCallback }) => {
 
 Navbar.defaultProps = {
   title: "React Songsterr",
-  iconPlayPause: "fas fa-play",
+  iconPlayPause: "fa-play-circle fa-2x",
   icon: "fab fa-react",
   navbarCallback: undefined
 };
