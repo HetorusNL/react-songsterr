@@ -10,7 +10,7 @@ class App extends Component {
     songsterrs: [],
     loading: false,
     rows: 1,
-    columns: 2,
+    columns: 1,
     iconPlayPause: "fas fa-play-circle fa-2x"
   };
 
@@ -19,7 +19,7 @@ class App extends Component {
     this.songsterrsRef = React.createRef();
   }
 
-  // initially add a single Songsterr to the page when the page loads
+  // initially add rows*columns number of Songsterrs to the page when the page loads
   componentDidMount() {
     this.setState({ loading: true });
     this.updateRowsColumns(this.state.rows, this.state.columns);

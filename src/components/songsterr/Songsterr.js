@@ -43,16 +43,15 @@ class Songsterr extends Component {
 
     return (
       <div>
-        <p>A songsterr will be displayed here with id: {id}</p>
         {this.state.loading && (
-          <Spinner height={(document.body.scrollHeight - 100) / rows - 25} />
+          <Spinner height={(document.body.scrollHeight - 80) / rows} />
         )}
         <iframe
           id={"songsterr-window-" + id}
           src="https://songsterr.rs.hetorus.nl"
           title={"songsterr window " + id}
           width="100%"
-          height={(document.body.scrollHeight - 100) / rows - 25}
+          height={(document.body.scrollHeight - 80) / rows}
           onLoad={this.iframeOnLoad.bind(this)}
           style={{
             backgroundColor: "white",

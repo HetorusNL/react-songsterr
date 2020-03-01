@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = ({ icon, iconPlayPause, title, navbarCallback }) => {
   return (
-    <nav className="navbar bg-primary">
+    <nav className="navbar bg-primary" style={{ marginBottom: "0px" }}>
       <Link to="/">
         <h1>
           <i className={icon}></i> {title}
