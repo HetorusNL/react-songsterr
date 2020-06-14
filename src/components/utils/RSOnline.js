@@ -12,10 +12,32 @@ class RSOnline {
     };
   }
 
-  requestGroupCode = () => {
+  createGroup = () => {
     // ask the server for a group code
     this.websocketOpen &&
-      this.websocket.send(JSON.stringify({ command: "get_group_code" }));
+      this.websocket.send(JSON.stringify({ command: "create_group" }));
+  };
+
+  joinGroup = (groupCode) => {
+    // ask the server for this user to join the specified group
+    this.websocketOpen &&
+      this.websocket.send(
+        JSON.stringify({
+          command: "join_group",
+          // ensure that groupCode is serialized
+          params: { group_code: groupCode || " " },
+        })
+      );
+  };
+
+  leaveGroup = () => {
+    this.websocketOpen &&
+      this.websocket.send(JSON.stringify({ command: "leave_group" }));
+  };
+
+  playPause = () => {
+    this.websocketOpen &&
+      this.websocket.send(JSON.stringify({ command: "play_pause" }));
   };
 
   pingLoop = () => {

@@ -6,24 +6,28 @@ const Navbar = ({
   icon,
   iconPlayPause,
   title,
-  ownGroupCode,
+  groupFailReason,
+  userIsInGroup,
   connectedToRSOnline,
   navbarCallback,
 }) => {
-  const [createGroupClicked, setCreateGroupClicked] = useState(false);
   const [joinGroupClicked, setJoinGroupClicked] = useState(false);
+  const [joinGroupCode, setJoinGroupCode] = useState("");
 
   const onCreateGroupClicked = () => {
     console.log("clicked on the create group button!");
-    navbarCallback("getGroupCode");
-    setCreateGroupClicked(true);
+    navbarCallback("createGroup");
     setJoinGroupClicked(false);
   };
 
   const onJoinGroupClicked = () => {
     console.log("clicked on the join group button!");
     setJoinGroupClicked(true);
-    setCreateGroupClicked(false);
+  };
+  const onLeaveGroupClicked = () => {
+    console.log("clicked on the leave group button!");
+    navbarCallback("leaveGroup");
+    setJoinGroupClicked(false);
   };
 
   return (
@@ -98,64 +102,73 @@ const Navbar = ({
         <li style={{ marginLeft: "0.5em", marginRight: "0.5em" }}>
           <h1
             style={{
-              color: connectedToRSOnline ? "green" : "red",
+              color: connectedToRSOnline
+                ? "var(--success-color)"
+                : "var(--danger-color)",
             }}
           >
             RS Online
           </h1>
         </li>
-        {createGroupClicked ? (
+        {userIsInGroup ? (
           <Fragment>
             <li style={{ marginLeft: "1em", marginRight: "0.5em" }}>
-              Group code:
-            </li>
-            <li style={{ marginRight: "1em" }}>
-              <input
-                type="text"
-                value={ownGroupCode}
-                readOnly={true}
-                style={{ margin: "0em", width: "5em" }}
-              />
-            </li>
-          </Fragment>
-        ) : (
-          <li>
-            <button className="btn" onClick={onCreateGroupClicked}>
-              {joinGroupClicked ? "Create a group instead" : "Create Group"}
-            </button>
-          </li>
-        )}
-        {joinGroupClicked ? (
-          <Fragment>
-            <li style={{ marginLeft: "1em", marginRight: "0.5em" }}>
-              Enter group code:
+              Group Code: {userIsInGroup}
             </li>
             <li>
-              <input
-                type="text"
-                maxLength={4}
-                style={{
-                  margin: "0em",
-                  width: "5em",
-                  textTransform: "uppercase", // SHOW the text (only) in uppercase
-                }}
-              />
+              <button className="btn" onClick={onLeaveGroupClicked}>
+                Leave Group
+              </button>
             </li>
-            <button
-              className="btn"
-              onClick={() => {
-                navbarCallback("joinGroup");
-              }}
-            >
-              Join Group
-            </button>
           </Fragment>
         ) : (
-          <li>
-            <button className="btn" onClick={onJoinGroupClicked}>
-              {createGroupClicked ? "Join a group instead" : "Join Group"}
-            </button>
-          </li>
+          <Fragment>
+            <li>
+              <button className="btn" onClick={onCreateGroupClicked}>
+                Create Group
+              </button>
+            </li>
+            {joinGroupClicked ? (
+              <Fragment>
+                <li style={{ marginLeft: "1em", marginRight: "0.5em" }}>
+                  Enter group code:
+                </li>
+                <li>
+                  <input
+                    value={joinGroupCode}
+                    onChange={(e) => setJoinGroupCode(e.target.value)}
+                    type="text"
+                    maxLength={4}
+                    style={{
+                      margin: "0em",
+                      width: "5em",
+                      textTransform: "uppercase", // SHOW the text (only) in uppercase
+                    }}
+                  />
+                </li>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    console.log("joinGroupCode: ", joinGroupCode);
+                    navbarCallback("joinGroup", { groupCode: joinGroupCode });
+                  }}
+                >
+                  Join Group
+                </button>
+                {groupFailReason && (
+                  <li style={{ color: "var(--danger-color" }}>
+                    {groupFailReason}
+                  </li>
+                )}
+              </Fragment>
+            ) : (
+              <li>
+                <button className="btn" onClick={onJoinGroupClicked}>
+                  Join Group
+                </button>
+              </li>
+            )}
+          </Fragment>
         )}
       </ul>
       <ul>
@@ -172,7 +185,7 @@ const Navbar = ({
 
 Navbar.defaultProps = {
   title: "React Songsterr",
-  ownGroupCode: "",
+  groupFailReason: "",
   connectedToRSOnline: false,
   iconPlayPause: "fa-play-circle fa-2x",
   icon: "fab fa-react",
@@ -181,7 +194,7 @@ Navbar.defaultProps = {
 
 Navbar.propTypes = {
   title: PropTypes.string.isRequired,
-  ownGroupCode: PropTypes.string.isRequired,
+  groupFailReason: PropTypes.string.isRequired,
   connectedToRSOnline: PropTypes.bool.isRequired,
   icon: PropTypes.string.isRequired,
   iconPlayPause: PropTypes.string.isRequired,

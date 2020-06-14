@@ -13,7 +13,8 @@ class App extends Component {
     rows: 1,
     columns: 1,
     iconPlayPause: "fas fa-play-circle fa-2x",
-    ownGroupCode: "",
+    groupFailReason: "",
+    userIsInGroup: "",
     lastConnectTime: 0,
     connectedToRSOnline: false,
   };
@@ -29,12 +30,23 @@ class App extends Component {
     try {
       const data = JSON.parse(event.data);
       switch (data.command) {
-        case "group_code":
-          this.setState({ ownGroupCode: data.group_code });
-          break;
         case "pong":
           this.setState({ lastConnectTime: new Date().getTime() });
           this.setState({ connectedToRSOnline: true });
+          break;
+        case "group_code":
+          console.log(data);
+          this.setState({ userIsInGroup: data.result ? data.group_code : "" });
+          this.setState({ groupFailReason: data.result ? "" : data.reason });
+          break;
+        case "play_pause":
+          this.setState({
+            iconPlayPause:
+              this.state.iconPlayPause === "fas fa-play-circle fa-2x"
+                ? "fas fa-pause-circle fa-2x"
+                : "fas fa-play-circle fa-2x",
+          });
+          this.songsterrsRef.current.playPause();
           break;
         default:
           console.log("unsupported event.data", data);
@@ -83,17 +95,24 @@ class App extends Component {
     });
   }
 
-  navbarCallback(command) {
-    console.log(command);
+  navbarCallback(command, params = undefined) {
+    console.log("navbarCallback(", command, ",", params, ")");
     switch (command) {
       case "playPause":
-        this.setState({
-          iconPlayPause:
-            this.state.iconPlayPause === "fas fa-play-circle fa-2x"
-              ? "fas fa-pause-circle fa-2x"
-              : "fas fa-play-circle fa-2x",
-        });
-        this.songsterrsRef.current.playPause();
+        console.log("connectedtoRSOnline: ", this.state.connectedToRSOnline);
+        if (this.state.connectedToRSOnline) {
+          console.log("sending playpause to RSOnline");
+          this.rsOnline.playPause();
+        } else {
+          console.log("running playpause locally");
+          this.setState({
+            iconPlayPause:
+              this.state.iconPlayPause === "fas fa-play-circle fa-2x"
+                ? "fas fa-pause-circle fa-2x"
+                : "fas fa-play-circle fa-2x",
+          });
+          this.songsterrsRef.current.playPause();
+        }
         console.log("done performing callback");
         break;
       case "rowsMin":
@@ -118,10 +137,14 @@ class App extends Component {
       case "fontMin":
         this.songsterrsRef.current.changeFont(-1);
         break;
-      case "getGroupCode":
-        this.rsOnline.requestGroupCode();
+      case "createGroup":
+        this.rsOnline.createGroup();
         break;
       case "joinGroup":
+        this.rsOnline.joinGroup(params.groupCode);
+        break;
+      case "leaveGroup":
+        this.rsOnline.leaveGroup();
         break;
       default:
         console.log("unknown command: ", command);
@@ -136,7 +159,8 @@ class App extends Component {
       rows,
       columns,
       iconPlayPause,
-      ownGroupCode,
+      groupFailReason,
+      userIsInGroup,
       connectedToRSOnline,
     } = this.state;
     return (
@@ -144,7 +168,8 @@ class App extends Component {
         <div className="App">
           <Navbar
             iconPlayPause={iconPlayPause}
-            ownGroupCode={ownGroupCode}
+            groupFailReason={groupFailReason}
+            userIsInGroup={userIsInGroup}
             connectedToRSOnline={connectedToRSOnline}
             navbarCallback={this.navbarCallback.bind(this)}
           />
