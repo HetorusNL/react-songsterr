@@ -11,7 +11,7 @@ class Songsterrs extends Component {
     songsterrs: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
     rows: PropTypes.number.isRequired,
-    columns: PropTypes.number.isRequired
+    columns: PropTypes.number.isRequired,
   };
 
   createRefs() {
@@ -37,6 +37,14 @@ class Songsterrs extends Component {
     }
   }
 
+  changeFont(value) {
+    console.log("fontPlus or fontMin in songsterrs called");
+    for (let i = 0; i < this.props.songsterrs.length; i++) {
+      var songsterr = this.props.songsterrs[i];
+      songsterr.ref.current.changeFont(value);
+    }
+  }
+
   render() {
     const { songsterrs, loading, rows, columns } = this.props;
 
@@ -47,13 +55,13 @@ class Songsterrs extends Component {
     } else {
       const songsterrStyle = {
         display: "grid",
-        gridTemplateColumns: "repeat(" + columns + ", 1fr)"
+        gridTemplateColumns: "repeat(" + columns + ", 1fr)",
       };
       console.log(songsterrStyle);
       return (
         <div style={songsterrStyle}>
           {console.log(songsterrs)}
-          {songsterrs.map(songsterr => (
+          {songsterrs.map((songsterr) => (
             <Songsterr
               ref={songsterr.ref}
               key={songsterr.id}

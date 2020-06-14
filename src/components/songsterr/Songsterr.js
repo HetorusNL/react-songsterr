@@ -5,12 +5,12 @@ import Spinner from "../layout/Spinner";
 
 class Songsterr extends Component {
   state = {
-    loading: true
+    loading: true,
   };
 
   static propTypes = {
     songsterr: PropTypes.object.isRequired,
-    rows: PropTypes.number.isRequired
+    rows: PropTypes.number.isRequired,
   };
 
   iframeOnLoad(obj) {
@@ -18,22 +18,22 @@ class Songsterr extends Component {
   }
 
   playPause() {
+    this.sendCommand("play_pause");
+  }
+
+  changeFont(value) {
+    this.sendCommand("change_font", { change_value: value });
+  }
+
+  sendCommand(command, params = undefined) {
     var element = document.getElementById(
       "songsterr-window-" + this.props.songsterr.id
     );
     console.log(element);
     element.contentWindow.postMessage(
-      JSON.stringify({ command: "play_pause" }),
+      JSON.stringify({ command: command, params: params }),
       "https://songsterr.rs.hetorus.nl"
     );
-
-    // code to send a keyboard event (unusable at cross origin content)
-    //const ke = new KeyboardEvent("keydown", {
-    //  bubbles: true,
-    //  cancelable: true,
-    //  keyCode: 32
-    //});
-    //element.contentWindow.dispatchEvent(ke);
   }
 
   render() {
@@ -55,7 +55,7 @@ class Songsterr extends Component {
           onLoad={this.iframeOnLoad.bind(this)}
           style={{
             backgroundColor: "white",
-            display: this.state.loading ? "none" : "block"
+            display: this.state.loading ? "none" : "block",
           }}
         ></iframe>
       </div>

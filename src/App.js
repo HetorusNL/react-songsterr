@@ -4,6 +4,7 @@ import "./App.css";
 
 import Navbar from "./components/layout/Navbar";
 import Songsterrs from "./components/songsterr/Songsterrs";
+import RSOnline from "./components/utils/RSOnline";
 
 class App extends Component {
   state = {
@@ -11,13 +12,47 @@ class App extends Component {
     loading: false,
     rows: 1,
     columns: 1,
-    iconPlayPause: "fas fa-play-circle fa-2x"
+    iconPlayPause: "fas fa-play-circle fa-2x",
+    ownGroupCode: "",
+    lastConnectTime: 0,
+    connectedToRSOnline: false,
   };
 
   constructor(props) {
     super(props);
     this.songsterrsRef = React.createRef();
+    this.rsOnline = new RSOnline(this.rsOnlineCallback);
+    this.checkForPingLoop();
   }
+
+  rsOnlineCallback = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      switch (data.command) {
+        case "group_code":
+          this.setState({ ownGroupCode: data.group_code });
+          break;
+        case "pong":
+          this.setState({ lastConnectTime: new Date().getTime() });
+          this.setState({ connectedToRSOnline: true });
+          break;
+        default:
+          console.log("unsupported event.data", data);
+      }
+    } catch (SyntaxError) {
+      console.log("unsupported event", event);
+    }
+  };
+
+  checkForPingLoop = () => {
+    setTimeout(() => {
+      // reset connection of not connected for the last 5 seconds
+      if (new Date().getTime() > this.state.lastConnectTime + 5000) {
+        this.setState({ connectedToRSOnline: false });
+      }
+      this.checkForPingLoop();
+    }, 5000);
+  };
 
   // initially add rows*columns number of Songsterrs to the page when the page loads
   componentDidMount() {
@@ -44,7 +79,7 @@ class App extends Component {
     this.setState({
       rows: newRows,
       columns: newColumns,
-      songsterrs: songsterrs
+      songsterrs: songsterrs,
     });
   }
 
@@ -56,7 +91,7 @@ class App extends Component {
           iconPlayPause:
             this.state.iconPlayPause === "fas fa-play-circle fa-2x"
               ? "fas fa-pause-circle fa-2x"
-              : "fas fa-play-circle fa-2x"
+              : "fas fa-play-circle fa-2x",
         });
         this.songsterrsRef.current.playPause();
         console.log("done performing callback");
@@ -77,6 +112,17 @@ class App extends Component {
       case "columnsPlus":
         this.updateRowsColumns(this.state.rows, this.state.columns + 1);
         break;
+      case "fontPlus":
+        this.songsterrsRef.current.changeFont(1);
+        break;
+      case "fontMin":
+        this.songsterrsRef.current.changeFont(-1);
+        break;
+      case "getGroupCode":
+        this.rsOnline.requestGroupCode();
+        break;
+      case "joinGroup":
+        break;
       default:
         console.log("unknown command: ", command);
         break;
@@ -84,19 +130,29 @@ class App extends Component {
   }
 
   render() {
-    const { loading, songsterrs, rows, columns, iconPlayPause } = this.state;
+    const {
+      loading,
+      songsterrs,
+      rows,
+      columns,
+      iconPlayPause,
+      ownGroupCode,
+      connectedToRSOnline,
+    } = this.state;
     return (
       <Router>
         <div className="App">
           <Navbar
             iconPlayPause={iconPlayPause}
+            ownGroupCode={ownGroupCode}
+            connectedToRSOnline={connectedToRSOnline}
             navbarCallback={this.navbarCallback.bind(this)}
           />
           <Switch>
             <Route
               exact
               path="/"
-              render={props => (
+              render={(props) => (
                 <Fragment>
                   <Songsterrs
                     ref={this.songsterrsRef}
@@ -108,7 +164,7 @@ class App extends Component {
                 </Fragment>
               )}
             />
-            <Route exact path="/about" render={props => <p>About page</p>} />
+            <Route exact path="/about" render={(props) => <p>About page</p>} />
           </Switch>
         </div>
       </Router>
