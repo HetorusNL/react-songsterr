@@ -26,10 +26,8 @@ run one of the following commands:
 `yarn version --minor` // increments the `minor` number of the version  
 `yarn verison --major` // increments the `major` number of the version  
 all these three commands also create a git commit and git tag with the message:  
-`v${npm_package_version}` (which is the major.minor.patch version)
-
-note that a push to e.g. github should still be performed, e.g.:  
-`git push --tags` (include `--tags` to also push the tags to git)
+`v${npm_package_version}` (which is the major.minor.patch version)  
+these three ccommands also perform a push to the master branch on github and push the tags
 
 ### Deploy the newly generated version to the server
 
