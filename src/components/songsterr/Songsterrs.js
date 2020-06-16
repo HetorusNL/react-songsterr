@@ -46,29 +46,37 @@ class Songsterrs extends Component {
   }
 
   render() {
-    const { songsterrs, loading, rows, columns } = this.props;
+    const { songsterrs, loading, columns } = this.props;
 
     this.createRefs();
 
     if (loading) {
       return <Spinner />;
     } else {
+      const songsterrContainerStyle = {
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: "1",
+        flex: 1,
+      };
       const songsterrStyle = {
         display: "grid",
         gridTemplateColumns: "repeat(" + columns + ", 1fr)",
+        height: "100%",
       };
       console.log(songsterrStyle);
       return (
-        <div style={songsterrStyle}>
-          {console.log(songsterrs)}
-          {songsterrs.map((songsterr) => (
-            <Songsterr
-              ref={songsterr.ref}
-              key={songsterr.id}
-              songsterr={songsterr}
-              rows={rows}
-            />
-          ))}
+        <div style={songsterrContainerStyle}>
+          <div style={songsterrStyle}>
+            {console.log(songsterrs)}
+            {songsterrs.map((songsterr) => (
+              <Songsterr
+                ref={songsterr.ref}
+                key={songsterr.id}
+                songsterr={songsterr}
+              />
+            ))}
+          </div>
         </div>
       );
     }

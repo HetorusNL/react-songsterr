@@ -10,7 +10,6 @@ class Songsterr extends Component {
 
   static propTypes = {
     songsterr: PropTypes.object.isRequired,
-    rows: PropTypes.number.isRequired,
   };
 
   iframeOnLoad(obj) {
@@ -37,21 +36,18 @@ class Songsterr extends Component {
   }
 
   render() {
-    const { rows } = this.props;
     const { id } = this.props.songsterr;
     console.log(this.props);
 
     return (
       <div>
-        {this.state.loading && (
-          <Spinner height={(document.body.scrollHeight - 80) / rows} />
-        )}
+        {this.state.loading && <Spinner height="100%" />}
         <iframe
           id={"songsterr-window-" + id}
           src="https://songsterr.rs.hetorus.nl"
           title={"songsterr window " + id}
           width="100%"
-          height={(document.body.scrollHeight - 80) / rows}
+          height="100%"
           onLoad={this.iframeOnLoad.bind(this)}
           style={{
             backgroundColor: "white",

@@ -5,6 +5,7 @@ import "./App.css";
 import Navbar from "./components/layout/Navbar";
 import Songsterrs from "./components/songsterr/Songsterrs";
 import RSOnline from "./components/utils/RSOnline";
+import CacheBuster from "./components/utils/CacheBuster";
 
 class App extends Component {
   state = {
@@ -173,6 +174,35 @@ class App extends Component {
             connectedToRSOnline={connectedToRSOnline}
             navbarCallback={this.navbarCallback.bind(this)}
           />
+          <CacheBuster>
+            {({
+              loading,
+              isLatestVersion,
+              currentVersion,
+              latestVersion,
+              refreshCacheAndReload,
+            }) => {
+              if (!loading && !isLatestVersion) {
+                return (
+                  <div
+                    style={{
+                      color: "var(--danger-color)",
+                      margin: "auto",
+                      padding: "1em",
+                    }}
+                    onClick={refreshCacheAndReload}
+                  >
+                    There is a new version of React Songsterr available!
+                    <br />
+                    You are using {currentVersion} and {latestVersion} is
+                    available.
+                    <br /> Click on this message to reload the window.
+                  </div>
+                );
+              }
+              return null;
+            }}
+          </CacheBuster>
           <Switch>
             <Route
               exact
