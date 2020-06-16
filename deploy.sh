@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "are the prerequisites performed?"
+echo "Press any key to continue"
+read
+
 echo "making sure server root mount point exists"
 echo "sudo mkdir /mnt/r"
 sudo mkdir /mnt/r
@@ -33,3 +37,9 @@ mv /mnt/r/rs.hetorus.nl/rs_online/rs_online.py.sed /mnt/r/rs.hetorus.nl/rs_onlin
 
 echo ""
 echo "finished deployment of React Songsterr!"
+
+echo ""
+echo "perform the postrequisites now"
+echo "are the postrequisites performed?"
+echo "Press any key to continue"
+read

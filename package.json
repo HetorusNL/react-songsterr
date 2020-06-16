@@ -21,7 +21,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-build-version": "node generate-build-version"
+    "generate-build-version": "node generate-build-version",
+    "version": "yarn build && git add . && git commit -m \"bumped version number to ${npm_package_version}\"",
+    "deploy": "./deploy.sh"
   },
   "eslintConfig": {
     "extends": "react-app"
