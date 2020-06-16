@@ -25,8 +25,8 @@ run one of the following commands:
 `yarn version --patch` // increments the `patch` number of the version  
 `yarn version --minor` // increments the `minor` number of the version  
 `yarn verison --major` // increments the `major` number of the version  
-all these three commands also create a git commit with the message:  
-`bumped version number to ${npm_package_version}` (which is the major.minor.patch version)
+all these three commands also create a git commit and git tag with the message:  
+`v${npm_package_version}` (which is the major.minor.patch version)
 
 note that a push to e.g. github should still be performed, e.g.:  
 `git push --tags` (include `--tags` to also push the tags to git)

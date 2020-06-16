@@ -1,6 +1,6 @@
 {
   "name": "react-songsterr",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -22,7 +22,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-build-version": "node generate-build-version",
-    "version": "yarn build && git add . && git commit -m \"bumped version number to ${npm_package_version}\"",
+    "version": "yarn build && git add .",
     "deploy": "./deploy.sh"
   },
   "eslintConfig": {
