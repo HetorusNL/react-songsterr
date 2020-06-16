@@ -23,6 +23,7 @@
     "eject": "react-scripts eject",
     "generate-build-version": "node generate-build-version",
     "version": "yarn build && git add .",
+    "postversion": "git push --tags && git push",
     "deploy": "./deploy.sh"
   },
   "eslintConfig": {
