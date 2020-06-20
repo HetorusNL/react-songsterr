@@ -83,3 +83,8 @@ export default class CacheBuster extends Component {
     });
   }
 }
+
+/*
+ * source:
+ * https://dev.to/flexdinesh/cache-busting-a-react-app-22lk
+ */
