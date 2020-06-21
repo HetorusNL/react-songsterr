@@ -12,13 +12,18 @@ export default class CacheBuster extends Component {
       refreshCacheAndReload: () => {
         console.log("Clearing cache and hard reloading...");
         if (caches) {
-          // Service worker cache should be cleared with caches.delete()
-          caches.keys().then(async function (names) {
-            await Promise.all(names.map((name) => caches.delete(name)));
-          });
+          caches
+            .keys()
+            .then(async function (names) {
+              await Promise.all(names.map((name) => caches.delete(name)));
+            })
+            .then(
+              // delete browser cache and hard reload
+              // forceReload=true is deprecated,
+              // so do a 'normal' reload since we've already cleared the cache
+              window.location.reload()
+            );
         }
-        // delete browser cache and hard reload
-        window.location.reload(true);
       },
     };
   }

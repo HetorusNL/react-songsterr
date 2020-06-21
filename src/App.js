@@ -196,7 +196,8 @@ class App extends Component {
                     <br />
                     You are using {currentVersion} and {latestVersion} is
                     available.
-                    <br /> Click on this message to reload the window.
+                    <br /> Click on this message to reload the window. <br />
+                    If this doesn't work try pressing Ctrl+F5 to force refresh
                   </div>
                 );
               }
