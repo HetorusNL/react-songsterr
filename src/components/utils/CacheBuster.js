@@ -41,7 +41,7 @@ export default class CacheBuster extends Component {
   };
 
   componentDidMount() {
-    fetch("/meta.json")
+    fetch("/meta.json", { cache: "no-store" })
       .then((response) => response.json())
       .then((meta) => {
         const latestVersion = meta.version;
