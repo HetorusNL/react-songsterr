@@ -49,8 +49,7 @@ class Songsterr extends Component {
     console.log(this.props);
 
     return (
-      <div>
-        {this.state.loading && <Spinner height="100%" />}
+      <div style={{ position: "relative" }}>
         <iframe
           id={"songsterr-window-" + id}
           src="https://songsterr.rs.hetorus.nl"
@@ -60,9 +59,11 @@ class Songsterr extends Component {
           onLoad={this.iframeOnLoad.bind(this)}
           style={{
             backgroundColor: "white",
-            display: this.state.loading ? "none" : "block",
+            display: "block",
+            position: "absolute",
           }}
         ></iframe>
+        {this.state.loading && <Spinner />}
       </div>
     );
   }
