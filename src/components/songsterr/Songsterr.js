@@ -13,8 +13,17 @@ class Songsterr extends Component {
   };
 
   iframeOnLoad(obj) {
+    // first send the apply_css command
+    this.sendCommand("apply_css", {
+      href: "/static/SongsterrHacks.css",
+      rel: "stylesheet",
+      type: "text/css",
+    });
+    // then set the state that causes a rerender of the iframe
     this.setState({ loading: false });
   }
+
+  iframeOnLoadStart(obj) {}
 
   playPause() {
     this.sendCommand("play_pause");

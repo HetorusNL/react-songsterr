@@ -1,7 +1,16 @@
 # React Songsterr and RS Online
 
-React based wrapper around Songsterr: Supports embedding multiple Songsterr windows in a single browser window  
-RS Online supports synchronization of songsterr interactions across the network
+React based wrapper around Songsterr: Supports embedding multiple Songsterr windows in a single browser window.  
+RS Online supports synchronization of songsterr interactions across the network.  
+React Songsterr with RS Online is hosted at: `https://rs.hetorus.nl`.  
+(The development server, if online and reachable, is hosted at: `https://dev.rs.hetorus.nl`).
+
+## Using this repository
+
+**Make sure to modify .env.development during development and .env.production when deploying your instance of React Songsterr and RS Online!**
+
+Currently, the development server is set to: `https://dev.rs.hetorus.nl` and the production server is set to: `https://rs.hetorus.nl`.
+The corresponding development/production server appended with `/ws` path is used for the RS Online Python3 script, so modify this as wel (also mentioned in chapter: Deploy the newly generated version to the server).
 
 ## Scripts
 
