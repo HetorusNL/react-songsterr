@@ -42,8 +42,8 @@ these three commands also perform a push to the master branch on github and push
 
 prerequisites:
 
-- the rs_online.py script should be stopped
-- and the terminal running the script should be cd'd to the root dir
+- (windows only) the rs_online.py script should be stopped
+- (windows only) and the terminal running the script should be cd'd to the root dir
 
 run the following command to deploy the new version:  
 `yarn deploy`  
@@ -53,5 +53,6 @@ also the server's IP address is changed from development pc IP to server IP
 
 postrequisites:
 
-- cd the terminal back into the rs_online folder
-- start the rs_online.py script: `python rs_online.py`
+- (windows only) cd the terminal back into the rs_online folder
+- (windows only) start the rs_online.py script: `python3 rs_online.py`
+- (linux only) restart the rs_online.py script: `python3 rs_online.py`
