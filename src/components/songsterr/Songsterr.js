@@ -23,8 +23,6 @@ class Songsterr extends Component {
     this.setState({ loading: false });
   }
 
-  iframeOnLoadStart(obj) {}
-
   playPause() {
     this.sendCommand("play_pause");
   }

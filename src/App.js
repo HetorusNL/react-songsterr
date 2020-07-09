@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import queryString from "query-string";
 import "./App.css";
 
 import Navbar from "./components/layout/Navbar";
@@ -10,7 +11,6 @@ import CacheBuster from "./components/utils/CacheBuster";
 class App extends Component {
   state = {
     songsterrs: [],
-    loading: false,
     rows: 1,
     columns: 1,
     iconPlayPause: "fas fa-play-circle fa-2x",
@@ -69,9 +69,24 @@ class App extends Component {
 
   // initially add rows*columns number of Songsterrs to the page when the page loads
   componentDidMount() {
-    this.setState({ loading: true });
-    this.updateRowsColumns(this.state.rows, this.state.columns);
-    this.setState({ loading: false });
+    // call update to update the rows and columns based on search string
+    this.update();
+  }
+
+  update() {
+    if (this.songsterrsRef.current) {
+      var search = queryString.parse(
+        this.songsterrsRef.current.props.location.search
+      );
+      var rows = search.rows ? parseInt(search.rows) : this.state.rows;
+      var columns = search.columns
+        ? parseInt(search.columns)
+        : this.state.columns;
+    }
+    // only update when changed
+    if (rows * columns != this.state.songsterrs.length) {
+      this.updateRowsColumns(rows, columns);
+    }
   }
 
   updateRowsColumns(newRows, newColumns) {
@@ -80,19 +95,33 @@ class App extends Component {
     const newLength = newRows * newColumns;
     const oldLength = songsterrs.length;
     const diff = newLength - oldLength;
+    console.log("updating rows and columns of songsterr: diff: ", diff);
     if (diff > 0) {
       for (var i = oldLength; i < newLength; i++) {
         songsterrs.push({ id: i });
       }
     } else if (diff < 0) {
       songsterrs.length = newLength;
+    } else {
+      return; // not changed
     }
+
+    this.updateQueryString({ rows: newRows, columns: newColumns });
 
     // set the new state properties
     this.setState({
       rows: newRows,
       columns: newColumns,
       songsterrs: songsterrs,
+    });
+  }
+
+  updateQueryString(updates) {
+    var props = this.songsterrsRef.current.props;
+    var search = queryString.parse(props.location.search);
+    props.history.push({
+      ...props.location,
+      search: queryString.stringify({ ...search, ...updates }),
     });
   }
 
@@ -155,7 +184,6 @@ class App extends Component {
 
   render() {
     const {
-      loading,
       songsterrs,
       rows,
       columns,
@@ -212,10 +240,11 @@ class App extends Component {
                 <Fragment>
                   <Songsterrs
                     ref={this.songsterrsRef}
-                    loading={loading}
                     songsterrs={songsterrs}
                     rows={rows}
                     columns={columns}
+                    update={this.update.bind(this)}
+                    {...props}
                   />
                 </Fragment>
               )}
