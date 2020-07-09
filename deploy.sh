@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "are the prerequisites performed?"
-echo "Press any key to continue"
+echo "Press enter to continue"
 read
 
 echo "making sure server root mount point exists"
@@ -41,5 +41,5 @@ echo "finished deployment of React Songsterr!"
 echo ""
 echo "perform the postrequisites now"
 echo "are the postrequisites performed?"
-echo "Press any key to continue"
+echo "Press enter to continue"
 read
