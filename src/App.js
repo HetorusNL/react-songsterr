@@ -84,7 +84,7 @@ class App extends Component {
         : this.state.columns;
     }
     // only update when changed
-    if (rows * columns != this.state.songsterrs.length) {
+    if (rows * columns !== this.state.songsterrs.length) {
       this.updateRowsColumns(rows, columns);
     }
   }
