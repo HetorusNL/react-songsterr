@@ -24,10 +24,16 @@ const Navbar = ({
     console.log("clicked on the join group button!");
     setJoinGroupClicked(true);
   };
+
   const onLeaveGroupClicked = () => {
     console.log("clicked on the leave group button!");
     navbarCallback("leaveGroup");
     setJoinGroupClicked(false);
+  };
+
+  const joinGroup = () => {
+    console.log("joinGroupCode: ", joinGroupCode);
+    navbarCallback("joinGroup", { groupCode: joinGroupCode });
   };
 
   return (
@@ -137,6 +143,9 @@ const Navbar = ({
                   <input
                     value={joinGroupCode}
                     onChange={(e) => setJoinGroupCode(e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === "Enter") joinGroup();
+                    }}
                     type="text"
                     maxLength={4}
                     style={{
@@ -146,13 +155,7 @@ const Navbar = ({
                     }}
                   />
                 </li>
-                <button
-                  className="btn"
-                  onClick={() => {
-                    console.log("joinGroupCode: ", joinGroupCode);
-                    navbarCallback("joinGroup", { groupCode: joinGroupCode });
-                  }}
-                >
+                <button className="btn" onClick={() => joinGroup()}>
                   Join Group
                 </button>
                 {groupFailReason && (
