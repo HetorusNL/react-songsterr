@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -14,6 +14,8 @@ const Navbar = ({
   const [joinGroupClicked, setJoinGroupClicked] = useState(false);
   const [joinGroupCode, setJoinGroupCode] = useState("");
 
+  let joinGroupInputField = null;
+
   const onCreateGroupClicked = () => {
     console.log("clicked on the create group button!");
     navbarCallback("createGroup");
@@ -24,6 +26,11 @@ const Navbar = ({
     console.log("clicked on the join group button!");
     setJoinGroupClicked(true);
   };
+
+  // when the 'Join Group' button is clicked, focus the group code input field
+  useEffect(() => {
+    if (joinGroupInputField && joinGroupClicked) joinGroupInputField.focus();
+  }, [joinGroupInputField, joinGroupClicked]);
 
   const onLeaveGroupClicked = () => {
     console.log("clicked on the leave group button!");
@@ -145,6 +152,9 @@ const Navbar = ({
                     onChange={(e) => setJoinGroupCode(e.target.value)}
                     onKeyUp={(e) => {
                       if (e.key === "Enter") joinGroup();
+                    }}
+                    ref={(inputField) => {
+                      joinGroupInputField = inputField;
                     }}
                     type="text"
                     maxLength={4}
