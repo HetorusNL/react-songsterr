@@ -16,7 +16,8 @@
     "serialize-javascript": "^2.1.2"
   },
   "resolutions": {
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.19",
+    "elliptic": "^6.5.3"
   },
   "scripts": {
     "start": "react-scripts start",
