@@ -15,6 +15,9 @@
     "react-scripts": "^3.4.0",
     "serialize-javascript": "^2.1.2"
   },
+  "resolutions": {
+    "lodash": "^4.17.19"
+  },
   "scripts": {
     "start": "react-scripts start",
     "prebuild": "yarn generate-build-version",
