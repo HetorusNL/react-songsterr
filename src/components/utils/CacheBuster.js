@@ -17,6 +17,16 @@ export default class CacheBuster extends Component {
             .then(async function (names) {
               await Promise.all(names.map((name) => caches.delete(name)));
             })
+            .then(() => {
+              const request = async () => {
+                const response = await fetch("/", {
+                  cache: "reload",
+                  credentials: "include",
+                });
+                console.log(response);
+              };
+              request();
+            })
             .then(
               // delete browser cache and hard reload
               // forceReload=true is deprecated,
