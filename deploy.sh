@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 echo "are the prerequisites performed?"
 echo "Press enter to continue"
@@ -6,7 +7,7 @@ read
 
 echo "making sure server root mount point exists"
 echo "sudo mkdir /mnt/r"
-sudo mkdir /mnt/r
+sudo mkdir -p /mnt/r
 
 echo ""
 echo "make sure that server root is mounted"
@@ -16,7 +17,7 @@ sudo mount -t drvfs R: /mnt/r
 echo ""
 echo "removing existing content from folder"
 echo "sudo rm -r /mnt/r/rs.hetorus.nl/*"
-sudo rm -r /mnt/r/rs.hetorus.nl/*
+sudo rm -rf /mnt/r/rs.hetorus.nl/*
 
 echo ""
 echo "copying React Songsterr to the server root"
