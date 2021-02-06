@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import random
+import socket
 import time
 import threading
 import uuid
@@ -25,19 +26,19 @@ class RSOnline(object):
     def logging_function(self):
         while True:
             time.sleep(self.log_every_x_sec)
+            not_serializable = lambda obj: "<not serializable>"
             logger.debug(
-                f"users: {json.dumps(self.users, default=lambda o: '<not serializable>')}"
+                f"users: {json.dumps(self.users, default=not_serializable)}"
             )
             logger.debug(
-                f"groups: {json.dumps(self.groups, default=lambda o: '<not serializable>')}"
+                f"groups: {json.dumps(self.groups, default=not_serializable)}"
             )
 
     def start(self):
         """blocking function that doesn't return"""
-        start_server = websockets.serve(
-            self.ws_handler, host="192.168.1.200", port=5678
-        )
-        logger.info("server created, waiting for clients")
+        host = self._get_machine_host()
+        start_server = websockets.serve(self.ws_handler, host=host, port=5678)
+        logger.info(f"server created (on {host}), waiting for clients")
 
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
@@ -75,7 +76,9 @@ class RSOnline(object):
                 logger.info(f"group had more menbers, removing the user")
                 if self.groups[group_code]["admin"] == user_uuid:
                     # if the user was admin, choose a random new admin
-                    new_admin = random.choice(self.groups[group_code]["members"])
+                    new_admin = random.choice(
+                        self.groups[group_code]["members"]
+                    )
                     self.groups[group_code]["admin"] = new_admin
                     logger.info(f"user was admin, new admin: {new_admin}")
                 logger.debug(f"new group info: {self.groups[group_code]}")
@@ -110,21 +113,32 @@ class RSOnline(object):
         logger.debug(f"trying to add user {user_uuid} to group {group_code}")
         if group_code in self.groups:
             if user_uuid in self.groups[group_code]["members"]:
-                logger.warning(f"user {user_uuid} already in group {group_code}!")
+                logger.warning(
+                    f"user {user_uuid} already in group {group_code}!"
+                )
             else:
                 self.users[user_uuid]["group_code"] = group_code
                 self.groups[group_code]["members"].append(user_uuid)
                 logger.info(f"added user {user_uuid} to group {group_code}")
                 logger.debug(f"group information: {self.groups[group_code]}")
                 message = json.dumps(
-                    {"command": "group_code", "result": True, "group_code": group_code,}
+                    {
+                        "command": "group_code",
+                        "result": True,
+                        "group_code": group_code,
+                    }
                 )
                 # notify all users that a group update happened
                 await asyncio.wait(
-                    [user["websocket"].send(message) for _, user in self.users.items()]
+                    [
+                        user["websocket"].send(message)
+                        for _, user in self.users.items()
+                    ]
                 )
         else:
-            logger.info(f"user {user_uuid}: group code {group_code} doesn't exist!")
+            logger.info(
+                f"user {user_uuid}: group code {group_code} doesn't exist!"
+            )
             await self.send_group_code(
                 user_uuid, reason=f"Group {group_code} doesn't exist!"
             )
@@ -160,7 +174,9 @@ class RSOnline(object):
         else:
             # send only to this user
             logger.info(f"sending play_pause to user: {user_uuid}")
-            await asyncio.wait([self.users[user_uuid]["websocket"].send(message)])
+            await asyncio.wait(
+                [self.users[user_uuid]["websocket"].send(message)]
+            )
 
     async def notify_state(self):
         if self.users:  # asyncio.wait doesn't accept an empty list
@@ -176,7 +192,10 @@ class RSOnline(object):
         if self.users:  # asyncio.wait doesn't accept an empty list
             message = self.users_event()
             await asyncio.wait(
-                [user["websocket"].send(message) for _, user in self.users.items()]
+                [
+                    user["websocket"].send(message)
+                    for _, user in self.users.items()
+                ]
             )
 
     async def register(self, user_uuid, websocket):
@@ -225,6 +244,13 @@ class RSOnline(object):
                         logger.error(f"unsupported event: {data}")
         finally:
             await self.unregister(user_uuid)
+
+    def _get_machine_host(self):
+        # create a dummy socket connection to google's public DNS server
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        # return the IPv4 address that is used by the socket
+        return s.getsockname()[0]
 
 
 if __name__ == "__main__":

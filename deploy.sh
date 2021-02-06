@@ -29,13 +29,6 @@ echo "cp -r rs_online/ /mnt/r/rs.hetorus.nl/"
 cp -r rs_online/ /mnt/r/rs.hetorus.nl/
 
 echo ""
-echo "modifying IP address of the websockets server"
-echo "sed -r 's/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/192\.168\.1\.210/' /mnt/r/rs.hetorus.nl/rs_online/rs_online.py > /mnt/r/rs.hetorus.nl/rs_online/rs_online.py.sed"
-sed -r 's/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/192\.168\.1\.210/' /mnt/r/rs.hetorus.nl/rs_online/rs_online.py > /mnt/r/rs.hetorus.nl/rs_online/rs_online.py.sed
-echo "mv /mnt/r/rs.hetorus.nl/rs_online/rs_online.py.sed /mnt/r/rs.hetorus.nl/rs_online/rs_online.py"
-mv /mnt/r/rs.hetorus.nl/rs_online/rs_online.py.sed /mnt/r/rs.hetorus.nl/rs_online/rs_online.py
-
-echo ""
 echo "finished deployment of React Songsterr!"
 
 echo ""
