@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "are the prerequisites performed?"
-echo "Press enter to continue"
-read
-
 echo "making sure server root mount point exists"
 echo "sudo mkdir /mnt/r"
 sudo mkdir -p /mnt/r
@@ -25,15 +21,14 @@ echo "cp -r build/* /mnt/r/rs.hetorus.nl/"
 cp -r build/* /mnt/r/rs.hetorus.nl/
 
 echo ""
-echo "copying RS Online to the server root"
-echo "cp -r rs_online/ /mnt/r/rs.hetorus.nl/"
-cp -r rs_online/ /mnt/r/rs.hetorus.nl/
+echo "copying RS Online script to the RS Online server"
+echo "scp -r rs_online/* debianvm:/opt/rs-online/"
+scp -r rs_online/* debianvm:/opt/rs-online/
+
+echo ""
+echo "restarting the RS Online service on the RS Online server"
+echo "ssh -t debianvm 'sudo systemctl restart rs-online.service'"
+ssh -t debianvm 'sudo systemctl restart rs-online.service'
 
 echo ""
 echo "finished deployment of React Songsterr!"
-
-echo ""
-echo "perform the postrequisites now"
-echo "are the postrequisites performed?"
-echo "Press enter to continue"
-read

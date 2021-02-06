@@ -39,6 +39,14 @@ class Songsterrs extends Component {
     }
   }
 
+  rewind() {
+    console.log("rewind in songsterrs called");
+    for (let i = 0; i < this.props.songsterrs.length; i++) {
+      var songsterr = this.props.songsterrs[i];
+      songsterr.ref.current.rewind();
+    }
+  }
+
   changeFont(value) {
     console.log("fontPlus or fontMin in songsterrs called");
     for (let i = 0; i < this.props.songsterrs.length; i++) {

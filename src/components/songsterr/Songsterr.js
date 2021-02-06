@@ -27,6 +27,10 @@ class Songsterr extends Component {
     this.sendCommand("play_pause");
   }
 
+  rewind() {
+    this.sendCommand("rewind");
+  }
+
   changeFont(value) {
     this.sendCommand("change_font", { change_value: value });
   }

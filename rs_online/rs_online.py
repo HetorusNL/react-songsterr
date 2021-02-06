@@ -178,6 +178,29 @@ class RSOnline(object):
                 [self.users[user_uuid]["websocket"].send(message)]
             )
 
+    async def send_rewind(self, user_uuid):
+        """send rewind to user or the whole group if the user has a group"""
+        logger.debug("rewind command received")
+        group_code = self.users[user_uuid].get("group_code")
+        message = json.dumps({"command": "rewind"})
+        if group_code:
+            # send rewind to whole group
+            logger.info(
+                f"sending rewind to group: {group_code} ({self.groups[group_code]})"
+            )
+            await asyncio.wait(
+                [
+                    self.users[_user_uuid]["websocket"].send(message)
+                    for _user_uuid in self.groups[group_code]["members"]
+                ]
+            )
+        else:
+            # send only to this user
+            logger.info(f"sending rewind to user: {user_uuid}")
+            await asyncio.wait(
+                [self.users[user_uuid]["websocket"].send(message)]
+            )
+
     async def notify_state(self):
         if self.users:  # asyncio.wait doesn't accept an empty list
             message = self.state_event()
@@ -231,6 +254,8 @@ class RSOnline(object):
                         await self.send_group_code(user_uuid)
                     elif data["command"] == "play_pause":
                         await self.send_play_pause(user_uuid)
+                    elif data["command"] == "rewind":
+                        await self.send_rewind(user_uuid)
                     else:
                         logger.error(f"unsupported event: {data}")
                 elif "action" in data:

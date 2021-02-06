@@ -49,6 +49,9 @@ class App extends Component {
           });
           this.songsterrsRef.current.playPause();
           break;
+        case "rewind":
+          this.songsterrsRef.current.rewind();
+          break;
         default:
           console.log("unsupported event.data", data);
       }
@@ -143,7 +146,16 @@ class App extends Component {
           });
           this.songsterrsRef.current.playPause();
         }
-        console.log("done performing callback");
+        break;
+      case "rewind":
+        console.log("connectedtoRSOnline: ", this.state.connectedToRSOnline);
+        if (this.state.connectedToRSOnline) {
+          console.log("sending rewind to RSOnline");
+          this.rsOnline.rewind();
+        } else {
+          console.log("running rewind locally");
+          this.songsterrsRef.current.rewind();
+        }
         break;
       case "rowsMin":
         if (this.state.rows > 1) {

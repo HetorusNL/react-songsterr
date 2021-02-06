@@ -59,6 +59,14 @@ const Navbar = ({
             }}
           ></i>
         </li>
+        <li style={{ marginLeft: "0.5em" }}>
+          <i
+            className="fas fa-arrow-alt-circle-left fa-2x"
+            onClick={() => {
+              navbarCallback("rewind");
+            }}
+          ></i>
+        </li>
         <li style={{ marginLeft: "1em" }}>
           <i
             className="fas fa-minus-circle fa-2x"

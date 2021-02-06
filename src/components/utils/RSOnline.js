@@ -40,6 +40,11 @@ class RSOnline {
       this.websocket.send(JSON.stringify({ command: "play_pause" }));
   };
 
+  rewind = () => {
+    this.websocketOpen &&
+      this.websocket.send(JSON.stringify({ command: "rewind" }));
+  };
+
   pingLoop = () => {
     setTimeout(() => {
       this.websocket.send(JSON.stringify({ command: "ping" }));
