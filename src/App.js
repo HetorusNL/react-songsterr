@@ -13,6 +13,7 @@ class App extends Component {
     songsterrs: [],
     rows: 1,
     columns: 1,
+    url: "",
     iconPlayPause: "fas fa-play-circle fa-2x",
     groupFailReason: "",
     userIsInGroup: "",
@@ -25,7 +26,22 @@ class App extends Component {
     this.songsterrsRef = React.createRef();
     this.rsOnline = new RSOnline(this.rsOnlineCallback);
     this.checkForPingLoop();
+    window.addEventListener("message", this.messageFromSongsterr, false);
   }
+
+  messageFromSongsterr = (event) => {
+    console.log(event);
+    try {
+      const jsonMessage = JSON.parse(event.data);
+      if (jsonMessage.href) {
+        this.setState({ url: jsonMessage.href });
+        this.updateQueryString({ url: this.state.url });
+        console.log("updated url to: ", this.state.url);
+      }
+    } catch (e) {
+      console.log("failed to parse message: ", event, e);
+    }
+  };
 
   rsOnlineCallback = (event) => {
     try {
@@ -51,6 +67,9 @@ class App extends Component {
           break;
         case "rewind":
           this.songsterrsRef.current.rewind();
+          break;
+        case "broadcast":
+          this.songsterrsRef.current.broadcast(data.url);
           break;
         default:
           console.log("unsupported event.data", data);
@@ -132,7 +151,7 @@ class App extends Component {
     console.log("navbarCallback(", command, ",", params, ")");
     switch (command) {
       case "playPause":
-        console.log("connectedtoRSOnline: ", this.state.connectedToRSOnline);
+        console.log("connectedToRSOnline: ", this.state.connectedToRSOnline);
         if (this.state.connectedToRSOnline) {
           console.log("sending playpause to RSOnline");
           this.rsOnline.playPause();
@@ -148,13 +167,22 @@ class App extends Component {
         }
         break;
       case "rewind":
-        console.log("connectedtoRSOnline: ", this.state.connectedToRSOnline);
+        console.log("connectedToRSOnline: ", this.state.connectedToRSOnline);
         if (this.state.connectedToRSOnline) {
           console.log("sending rewind to RSOnline");
           this.rsOnline.rewind();
         } else {
           console.log("running rewind locally");
           this.songsterrsRef.current.rewind();
+        }
+        break;
+      case "broadcast":
+        console.log("userIsInGroup: ", this.state.userIsInGroup);
+        if (this.state.userIsInGroup) {
+          console.log("sending broadcast to RSOnline");
+          if (this.state.url) {
+            this.rsOnline.broadcast(this.state.url);
+          }
         }
         break;
       case "rowsMin":
@@ -199,6 +227,7 @@ class App extends Component {
       songsterrs,
       rows,
       columns,
+      url,
       iconPlayPause,
       groupFailReason,
       userIsInGroup,
@@ -255,6 +284,7 @@ class App extends Component {
                     songsterrs={songsterrs}
                     rows={rows}
                     columns={columns}
+                    url={url}
                     update={this.update.bind(this)}
                     {...props}
                   />
