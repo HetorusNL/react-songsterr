@@ -45,6 +45,13 @@ class RSOnline {
       this.websocket.send(JSON.stringify({ command: "rewind" }));
   };
 
+  broadcast = (url) => {
+    this.websocketOpen &&
+      this.websocket.send(
+        JSON.stringify({ command: "broadcast", params: { url: url } })
+      );
+  };
+
   pingLoop = () => {
     setTimeout(() => {
       this.websocket.send(JSON.stringify({ command: "ping" }));

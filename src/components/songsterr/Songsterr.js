@@ -6,6 +6,7 @@ import Spinner from "../layout/Spinner";
 class Songsterr extends Component {
   state = {
     loading: true,
+    url: "https://songsterr.rs.hetorus.nl",
   };
 
   static propTypes = {
@@ -19,6 +20,8 @@ class Songsterr extends Component {
       rel: "stylesheet",
       type: "text/css",
     });
+    // only the first songsterr should send url updates
+    this.sendCommand("send_url", { send_url: this.props.songsterr.id === 0 });
     // then set the state that causes a rerender of the iframe
     this.setState({ loading: false });
   }
@@ -29,6 +32,11 @@ class Songsterr extends Component {
 
   rewind() {
     this.sendCommand("rewind");
+  }
+
+  broadcast(url) {
+    // this.setState({ url: url });
+    this.sendCommand("broadcast", { url: url });
   }
 
   changeFont(value) {
@@ -54,7 +62,7 @@ class Songsterr extends Component {
       <div style={{ position: "relative" }}>
         <iframe
           id={"songsterr-window-" + id}
-          src="https://songsterr.rs.hetorus.nl"
+          src={this.state.url}
           title={"songsterr window " + id}
           width="100%"
           height="100%"

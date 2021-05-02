@@ -15,7 +15,6 @@ logger.setLevel(logging.DEBUG)
 
 class RSOnline(object):
     def __init__(self):
-        self.state = {"value": 0}
         self.users = {}
         self.groups = {}
 
@@ -42,9 +41,6 @@ class RSOnline(object):
 
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
-
-    def state_event(self):
-        return json.dumps({"type": "state", **self.state})
 
     def users_event(self):
         return json.dumps({"type": "users", "count": len(self.users)})
@@ -104,7 +100,7 @@ class RSOnline(object):
         """send pong reply to the ping request of client"""
         # logger.debug(f"sending pong to client {user_uuid}")
         message = json.dumps({"command": "pong"})
-        await asyncio.wait([self.users[user_uuid]["websocket"].send(message)])
+        await self._wait_for(self.users[user_uuid]["websocket"].send(message))
 
     async def join_group(self, user_uuid, group_code):
         """add a user to a group, if it exists"""
@@ -121,20 +117,7 @@ class RSOnline(object):
                 self.groups[group_code]["members"].append(user_uuid)
                 logger.info(f"added user {user_uuid} to group {group_code}")
                 logger.debug(f"group information: {self.groups[group_code]}")
-                message = json.dumps(
-                    {
-                        "command": "group_code",
-                        "result": True,
-                        "group_code": group_code,
-                    }
-                )
-                # notify all users that a group update happened
-                await asyncio.wait(
-                    [
-                        user["websocket"].send(message)
-                        for _, user in self.users.items()
-                    ]
-                )
+                await self.send_group_code(user_uuid)
         else:
             logger.info(
                 f"user {user_uuid}: group code {group_code} doesn't exist!"
@@ -153,7 +136,7 @@ class RSOnline(object):
         if reason:
             message_json["reason"] = reason
         message = json.dumps(message_json)
-        await asyncio.wait([self.users[user_uuid]["websocket"].send(message)])
+        await self._wait_for(self.users[user_uuid]["websocket"].send(message))
 
     async def send_play_pause(self, user_uuid):
         """send play_pause to user or the whole group if the user has a group"""
@@ -165,7 +148,7 @@ class RSOnline(object):
             logger.info(
                 f"sending play_pause to group: {group_code} ({self.groups[group_code]})"
             )
-            await asyncio.wait(
+            await self._wait_for(
                 [
                     self.users[_user_uuid]["websocket"].send(message)
                     for _user_uuid in self.groups[group_code]["members"]
@@ -174,8 +157,8 @@ class RSOnline(object):
         else:
             # send only to this user
             logger.info(f"sending play_pause to user: {user_uuid}")
-            await asyncio.wait(
-                [self.users[user_uuid]["websocket"].send(message)]
+            await self._wait_for(
+                self.users[user_uuid]["websocket"].send(message)
             )
 
     async def send_rewind(self, user_uuid):
@@ -188,7 +171,7 @@ class RSOnline(object):
             logger.info(
                 f"sending rewind to group: {group_code} ({self.groups[group_code]})"
             )
-            await asyncio.wait(
+            await self._wait_for(
                 [
                     self.users[_user_uuid]["websocket"].send(message)
                     for _user_uuid in self.groups[group_code]["members"]
@@ -197,29 +180,36 @@ class RSOnline(object):
         else:
             # send only to this user
             logger.info(f"sending rewind to user: {user_uuid}")
-            await asyncio.wait(
-                [self.users[user_uuid]["websocket"].send(message)]
+            await self._wait_for(
+                self.users[user_uuid]["websocket"].send(message)
             )
 
-    async def notify_state(self):
-        if self.users:  # asyncio.wait doesn't accept an empty list
-            message = self.state_event()
-            await asyncio.wait(
+    async def send_broadcast(self, user_uuid, url):
+        """send broadcast to whole group"""
+        logger.debug("broadcast command received")
+        group_code = self.users[user_uuid].get("group_code")
+        message = json.dumps({"command": "broadcast", "url": url})
+        if group_code:
+            # send broadcast to whole group
+            logger.info(
+                f"sending broadcast to group: {group_code} ({self.groups[group_code]})"
+            )
+            await self._wait_for(
                 [
-                    user["websocket"].send(message)
-                    for user_uuid, user in self.users.items()
+                    self.users[_user_uuid]["websocket"].send(message)
+                    for _user_uuid in self.groups[group_code]["members"]
                 ]
+            )
+        else:
+            logger.warning(
+                "user {user_uuid} sent broadcast without being in a group!"
             )
 
     async def notify_users(self):
-        if self.users:  # asyncio.wait doesn't accept an empty list
-            message = self.users_event()
-            await asyncio.wait(
-                [
-                    user["websocket"].send(message)
-                    for _, user in self.users.items()
-                ]
-            )
+        message = self.users_event()
+        await self._wait_for(
+            [user["websocket"].send(message) for _, user in self.users.items()]
+        )
 
     async def register(self, user_uuid, websocket):
         logger.info(f"user ({user_uuid}) registered!")
@@ -238,7 +228,6 @@ class RSOnline(object):
         user_uuid = self.generate_uuid()
         await self.register(user_uuid, websocket)
         try:
-            await websocket.send(self.state_event())
             async for message in websocket:
                 data = json.loads(message)
                 if "command" in data:
@@ -256,15 +245,9 @@ class RSOnline(object):
                         await self.send_play_pause(user_uuid)
                     elif data["command"] == "rewind":
                         await self.send_rewind(user_uuid)
-                    else:
-                        logger.error(f"unsupported event: {data}")
-                elif "action" in data:
-                    if data["action"] == "minus":
-                        self.state["value"] -= 1
-                        await self.notify_state()
-                    elif data["action"] == "plus":
-                        self.state["value"] += 1
-                        await self.notify_state()
+                    elif data["command"] == "broadcast":
+                        url = data["params"]["url"]
+                        await self.send_broadcast(user_uuid, url)
                     else:
                         logger.error(f"unsupported event: {data}")
         finally:
@@ -276,6 +259,22 @@ class RSOnline(object):
         s.connect(("8.8.8.8", 80))
         # return the IPv4 address that is used by the socket
         return s.getsockname()[0]
+
+    async def _wait_for(self, *args):
+        # print(f"args: {args}")
+        tasks = []
+        for obj in args:
+            if isinstance(obj, list) or isinstance(obj, tuple):
+                for coro in obj:
+                    # print(f"waiting for obj in list: {coro}")
+                    tasks.append(asyncio.create_task(coro))
+            else:
+                # print(f"waiting for obj: {obj}")
+                tasks.append(asyncio.create_task(obj))
+
+        # make sure we have tasks to wait on
+        if tasks:
+            await asyncio.wait(tasks)
 
 
 if __name__ == "__main__":

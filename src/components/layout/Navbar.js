@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import ReactToolTip from "react-tooltip";
 
 const Navbar = ({
   icon,
@@ -51,23 +52,58 @@ const Navbar = ({
         </h1>
       </Link>
       <ul style={{ alignItems: "center" }}>
+        <li style={{ marginRight: "0.5em" }}>
+          <b>Online:</b>
+        </li>
         <li>
           <i
+            data-tip
+            data-for="playPauseTip"
             className={iconPlayPause}
             onClick={() => {
               navbarCallback("playPause");
             }}
           ></i>
+          <ReactToolTip id="playPauseTip" place="bottom">
+            {userIsInGroup ? "Send play/pause to group members" : "Play/pause"}
+          </ReactToolTip>
         </li>
         <li style={{ marginLeft: "0.5em" }}>
           <i
-            className="fas fa-arrow-alt-circle-left fa-2x"
+            data-tip
+            data-for="rewindTip"
+            className="fas fa-step-backward fa-2x"
             onClick={() => {
               navbarCallback("rewind");
             }}
           ></i>
+          <ReactToolTip id="rewindTip" place="bottom">
+            {userIsInGroup
+              ? "Send rewind song to group members"
+              : "Rewind song"}
+          </ReactToolTip>
         </li>
-        <li style={{ marginLeft: "1em" }}>
+        <li style={{ marginLeft: "0.5em" }}>
+          <i
+            data-tip
+            data-for="broadcastTip"
+            className="fas fa-broadcast-tower fa-2x"
+            onClick={() => {
+              navbarCallback("broadcast");
+            }}
+          ></i>
+          <ReactToolTip id="broadcastTip" place="bottom">
+            {userIsInGroup
+              ? "Broadcast song to group members"
+              : "Broadcast song not available without a group!"}
+          </ReactToolTip>
+        </li>
+      </ul>
+      <ul style={{ alignItems: "center" }}>
+        <li style={{ marginRight: "0.5em" }}>
+          <b>Local:</b>
+        </li>
+        <li>
           <i
             className="fas fa-minus-circle fa-2x"
             onClick={() => {

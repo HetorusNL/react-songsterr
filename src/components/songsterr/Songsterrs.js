@@ -10,6 +10,7 @@ class Songsterrs extends Component {
     songsterrs: PropTypes.array.isRequired,
     rows: PropTypes.number.isRequired,
     columns: PropTypes.number.isRequired,
+    url: PropTypes.string.isRequired,
   };
 
   createRefs() {
@@ -44,6 +45,14 @@ class Songsterrs extends Component {
     for (let i = 0; i < this.props.songsterrs.length; i++) {
       var songsterr = this.props.songsterrs[i];
       songsterr.ref.current.rewind();
+    }
+  }
+
+  broadcast(url) {
+    console.log("broadcast in songsterrs called");
+    for (let i = 0; i < this.props.songsterrs.length; i++) {
+      var songsterr = this.props.songsterrs[i];
+      songsterr.ref.current.broadcast(url);
     }
   }
 
