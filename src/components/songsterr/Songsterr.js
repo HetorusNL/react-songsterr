@@ -39,15 +39,10 @@ class Songsterr extends Component {
     this.sendCommand("broadcast", { url: url });
   }
 
-  changeFont(value) {
-    this.sendCommand("change_font", { change_value: value });
-  }
-
   sendCommand(command, params = undefined) {
     var element = document.getElementById(
       "songsterr-window-" + this.props.songsterr.id
     );
-    console.log(element);
     element.contentWindow.postMessage(
       JSON.stringify({ command: command, params: params }),
       "https://songsterr.rs.hetorus.nl"
@@ -56,10 +51,10 @@ class Songsterr extends Component {
 
   render() {
     const { id } = this.props.songsterr;
-    console.log(this.props);
+    const { columns } = this.props;
 
     return (
-      <div style={{ position: "relative" }}>
+      <div>
         <iframe
           id={"songsterr-window-" + id}
           src={this.state.url}
@@ -71,9 +66,16 @@ class Songsterr extends Component {
             backgroundColor: "white",
             display: "block",
             position: "absolute",
+            left: (id % columns) * 100 + "%",
+            top: Math.floor(id / columns) * 100 + "%",
           }}
         ></iframe>
-        {this.state.loading && <Spinner />}
+        {this.state.loading && (
+          <Spinner
+            left={(id % columns) * 100 + "%"}
+            top={Math.floor(id / columns) * 100 + "%"}
+          />
+        )}
       </div>
     );
   }

@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 import Songsterr from "./Songsterr";
 
 class Songsterrs extends Component {
-  state = {};
+  state = {
+    zoom: 100,
+  };
 
   static propTypes = {
     songsterrs: PropTypes.array.isRequired,
@@ -14,11 +16,6 @@ class Songsterrs extends Component {
   };
 
   createRefs() {
-    console.log(
-      "creating refs for " +
-        this.props.songsterrs.length +
-        " songsterr instances"
-    );
     for (let i = 0; i < this.props.songsterrs.length; i++) {
       var songsterr = this.props.songsterrs[i];
       if (!songsterr.hasOwnProperty("ref")) {
@@ -58,26 +55,35 @@ class Songsterrs extends Component {
 
   changeFont(value) {
     console.log("fontPlus or fontMin in songsterrs called");
-    for (let i = 0; i < this.props.songsterrs.length; i++) {
-      var songsterr = this.props.songsterrs[i];
-      songsterr.ref.current.changeFont(value);
+    if (value > 0) {
+      this.setState({ zoom: this.state.zoom + 25 });
+    } else {
+      if (this.state.zoom >= 50) {
+        this.setState({ zoom: this.state.zoom - 25 });
+      }
     }
   }
 
   render() {
-    const { songsterrs, columns } = this.props;
+    const { songsterrs, rows, columns } = this.props;
     this.createRefs();
 
     const songsterrContainerStyle = {
-      display: "flex",
-      flexDirection: "column",
-      flexGrow: "1",
-      flex: 1,
+      position: "relative",
+      overflow: "hidden",
+      width: "100%",
+      height: "100%",
     };
     const songsterrStyle = {
-      display: "grid",
-      gridTemplateColumns: "repeat(" + columns + ", 1fr)",
-      height: "100%",
+      width: (100 / columns / this.state.zoom) * 100 + "%",
+      height: (100 / rows / this.state.zoom) * 100 + "%",
+      zoom: this.state.zoom / 100,
+      MozTransform: "scale(" + this.state.zoom / 100 + ")",
+      MozTransformOrigin: "0 0",
+      OTransform: "scale(" + this.state.zoom / 100 + ")",
+      OTransformOrigin: "0 0",
+      WebkitTransform: "scale(" + this.state.zoom / 100 + ")",
+      WebkitTransformOrigin: "0 0",
     };
     return (
       <div style={songsterrContainerStyle}>
@@ -87,6 +93,8 @@ class Songsterrs extends Component {
               ref={songsterr.ref}
               key={songsterr.id}
               songsterr={songsterr}
+              rows={rows}
+              columns={columns}
             />
           ))}
         </div>

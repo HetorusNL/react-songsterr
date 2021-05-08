@@ -2,10 +2,12 @@ import React, { Fragment } from "react";
 
 import spinner from "./spinner.svg";
 
-const Spinner = () => (
+const Spinner = ({ left, top }) => (
   <Fragment>
     <div
       style={{
+        left: left,
+        top: top,
         width: "100%",
         height: "100%",
         display: "block",
