@@ -1,3 +1,9 @@
+# [Archival] Repository update
+
+_As forced by Songsterr, the website has been taken down._
+_And as such development on this software has been stopped, and the repository archived._
+_Feel free to keep using it, but it won't be maintained or hosted at the URLs mentioned below._
+
 # React Songsterr and RS Online
 
 React based wrapper around Songsterr: Supports embedding multiple Songsterr windows in a single browser window.  
